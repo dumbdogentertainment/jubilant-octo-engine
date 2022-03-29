@@ -13,6 +13,20 @@ The intent of this helper is to ease the day-to-day duties of the parking lot at
 
 ### Parking Lot Status Report
 Generates and presents a summary of currently parked vehicles and the total revenue collected.
+``` json
+GET /api/v1/parking-lots/ParkingLot1
+{
+    "parkedVehicleCounts": {
+        "MONSTERTRUCK": 4,
+        "CAR": 8
+    },
+    "parkedVehicleRates": {
+        "MONSTERTRUCK": 15.0,
+        "CAR": 5.0
+    },
+    "totalRevenue": 100.0
+}
+```
 
 ----
 
