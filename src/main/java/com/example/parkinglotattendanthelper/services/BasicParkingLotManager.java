@@ -20,7 +20,6 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class BasicParkingLotManager implements IManageParkingLots {
     private final IProvideParkingLotData parkingLotDataProvider;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public ParkingLotSummary generateParkingLotSummary(String parkingLotId) {

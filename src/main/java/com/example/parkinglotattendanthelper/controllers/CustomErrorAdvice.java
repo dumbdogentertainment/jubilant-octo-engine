@@ -1,8 +1,6 @@
 package com.example.parkinglotattendanthelper.controllers;
 
-//import com.example.parkinglotattendanthelper.exceptions.NotImplementedException;
 import com.example.parkinglotattendanthelper.exceptions.*;
-import org.apache.commons.lang3.NotImplementedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -3,9 +3,7 @@ package com.example.parkinglotattendanthelper.controllers.v1;
 import com.example.parkinglotattendanthelper.controllers.CustomErrorAdvice;
 import com.example.parkinglotattendanthelper.controllers.v1.ParkingLotController;
 import com.example.parkinglotattendanthelper.core.IManageParkingLots;
-import com.example.parkinglotattendanthelper.exceptions.BadRequestException;
-import com.example.parkinglotattendanthelper.exceptions.ParkingLotFullException;
-import com.example.parkinglotattendanthelper.exceptions.ReservationNotFoundException;
+import com.example.parkinglotattendanthelper.exceptions.*;
 import com.example.parkinglotattendanthelper.models.api.ParkingLotSummary;
 import com.example.parkinglotattendanthelper.models.api.ParkingReservationRequest;
 import com.example.parkinglotattendanthelper.models.common.VehicleType;
@@ -22,6 +20,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -87,16 +86,20 @@ public class ParkingLotControllerTests {
 
     private static Stream<Arguments> provideExceptionsThrownForParkingReservation() {
         return Stream.of(
-                Arguments.of(new BadRequestException()),
-                Arguments.of(new BadRequestException("For testing ..")),
-                Arguments.of(new ParkingLotFullException()),
-                Arguments.of(new ParkingLotFullException("For testing .."))
+                Arguments.of(new BadRequestException(), status().isBadRequest()),
+                Arguments.of(new BadRequestException("For testing .."), status().isBadRequest()),
+                Arguments.of(new ParkingLotFullException(), status().isBadRequest()),
+                Arguments.of(new ParkingLotFullException("For testing .."), status().isBadRequest()),
+                Arguments.of(new ParkingLotNotInServiceException(), status().isNotImplemented()),
+                Arguments.of(new ParkingLotNotInServiceException("For testing .."), status().isNotImplemented()),
+                Arguments.of(new ParkingLotNotFoundException(), status().isNotFound()),
+                Arguments.of(new ParkingLotNotFoundException("For testing .."), status().isNotFound())
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideExceptionsThrownForParkingReservation")
-    void parkingSpaceReservationShouldYieldBadRequest(Exception thrownException) throws Exception {
+    void parkingSpaceReservationShouldYieldExpected(Exception thrownException, ResultMatcher expected) throws Exception {
         when(this.mockParkingLotManager.reserveParkingAvailability(anyString(), any(VehicleType.class)))
                 .thenThrow(thrownException);
 
@@ -109,7 +112,7 @@ public class ParkingLotControllerTests {
                         .post("/api/v1/parking-lots")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.asJsonString(payload)))
-                .andExpect(status().isBadRequest());
+                .andExpect(expected);
     }
 
     @Test
